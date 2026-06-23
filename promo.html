@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFID无障碍智能签到系统 - 杰欣智能</title>
+<style>
+  html { -webkit-user-select: none; user-select: none; }
+  body { -webkit-user-select: none; user-select: none; }
+  img { -webkit-user-drag: none; user-drag: none; pointer-events: auto; }
+
+  @font-face {
+    font-family:"Source Han Sans CN";
+    src: local("Source Han Sans CN"), local("Noto Sans CJK SC"), local("PingFang SC");
+  }
+
+  :root {
+    --blue: #006DEA;
+    --blue-dark: #004CA3;
+    --blue-light: #e8f3ff;
+    --blue-bg: #f5f9ff;
+    --text: #222;
+    --text-gray: #666;
+    --text-light: #999;
+    --white: #fff;
+    --border: #e8e8e8;
+    --bg: #f7f8fa;
+    --shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: "Source Han Sans CN", "Microsoft YaHei", "PingFang SC", -apple-system, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    font-size: 15px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ====== HEADER ====== */
+  .header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 20px;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+    font-size: 18px;
+  }
+  .logo-text { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .logo-text span { color: var(--blue); font-weight: 400; font-size: 13px; margin-left: 6px; }
+  .header-nav { display: flex; gap: 0; list-style: none; }
+  .header-nav a {
+    display: block;
+    padding: 20px 18px;
+    font-size: 15px;
+    color: var(--text-gray);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .header-nav a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* ====== HERO BANNER ====== */
+  .hero {
+    background: linear-gradient(135deg, #001a3a 0%, #002855 40%, #003b7a 100%);
+    color: var(--white);
+    padding: 80px 20px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: -180px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,109,234,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    bottom: -100px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,109,234,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    padding: 6px 24px;
+    border-radius: 20px;
+    letter-spacing: 3px;
+    margin-bottom: 32px;
+    position: relative; z-index: 1;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5.5vw, 48px);
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    position: relative; z-index: 1;
+    line-height: 1.3;
+  }
+  .hero h1 .accent { color: #5ca0f2; }
+  .hero .subtitle {
+    font-size: clamp(15px, 2vw, 18px);
+    opacity: 0.75;
+    letter-spacing: 3px;
+    margin-bottom: 48px;
+    position: relative; z-index: 1;
+    font-weight: 300;
+  }
+  .hero .stats {
+    display: flex;
+    justify-content: center;
+    gap: clamp(40px, 8vw, 80px);
+    flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+  .hero .stat-item { text-align: center; }
+  .hero .stat-num {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    color: #5ca0f2;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hero .stat-label { font-size: 13px; opacity: 0.7; letter-spacing: 1px; }
+
+  /* ====== SECTIONS ====== */
+  .section {
+    padding: 80px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-gray { background: var(--bg); padding: 80px 0; }
+  .section-gray .section { padding-top: 0; padding-bottom: 0; }
+  .section-blue { background: var(--blue-bg); padding: 80px 0; }
+  .section-blue .section { padding-top: 0; padding-bottom: 0; }
+
+  .sec-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+  .sec-header .label {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--blue);
+    letter-spacing: 4px;
+    border: 1px solid var(--blue);
+    padding: 4px 20px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .sec-header h2 {
+    font-size: clamp(24px, 3.5vw, 32px);
+    font-weight: 700;
+    color: #111;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .sec-header .line {
+    width: 50px; height: 3px;
+    background: var(--blue);
+    margin: 0 auto 16px;
+  }
+  .sec-header p {
+    font-size: 15px;
+    color: var(--text-gray);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ====== ADVANTAGE GRID ====== */
+  .adv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .adv-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 40px 32px;
+    transition: box-shadow 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .adv-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+  .adv-card .adv-num {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--blue-light);
+    position: absolute;
+    top: 10px; right: 20px;
+    line-height: 1;
+    opacity: 0.5;
+  }
+  .adv-card .adv-icon {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: var(--blue-bg);
+    color: var(--blue);
+    font-size: 24px;
+  }
+  .adv-card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111;
+  }
+  .adv-card p {
+    font-size: 14px;
+    color: var(--text-gray);
+    line-height: 1.9;
+  }
+
+  /* ====== PRODUCT COMPOSITION ====== */
+  .prod-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .prod-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+    text-align: center;
+    cursor: pointer;
+  }
+  .prod-card:hover { box-shadow: var(--shadow); }
+  .prod-card .prod-img {
+    width: 100%;
+    height: 220px;
+    background: #f0f2f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .prod-card .prod-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .prod-card:hover .prod-img img { transform: scale(1.05); }
+  .prod-card .prod-img .placeholder {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+  }
+  .prod-card .prod-body {
+    padding: 24px 20px;
+  }
+  .prod-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 8px;
+  }
+  .prod-card p {
+    font-size: 13px;
+    color: var(--text-gray);
+  }
+
+  /* ====== SCENARIO GRID ====== */
+  .scene-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .scene-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 36px 20px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .scene-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--scene-bg, none) center/cover no-repeat;
+    opacity: 1;
+    transition: transform 0.35s;
+    z-index: 0;
+  }
+  .scene-card:hover::before {
+    transform: scale(1.08);
+  }
+  .scene-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.6) 30%, rgba(255,255,255,0.98) 60%, rgba(255,255,255,1) 100%);
+    z-index: 1;
+  }
+  .scene-card:hover {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0,109,234,0.12);
+  }
+  .scene-card:hover::after {
+    background: linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.4) 30%, rgba(255,255,255,0.92) 60%, rgba(255,255,255,1) 100%);
+  }
+  .scene-card .s-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 16px;
+    background: var(--blue-bg);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    position: relative;
+    z-index: 2;
+  }
+  .scene-card .s-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ====== VIDEO LIST ====== */
+  .video-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 14px;
+  }
+  .video-item {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+    gap: 14px;
+  }
+  .video-item:hover {
+    border-color: var(--blue);
+    box-shadow: 0 2px 12px rgba(0,109,234,0.08);
+  }
+  .video-item .v-idx {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    color: var(--white);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .video-item .v-body { flex: 1; min-width: 0; }
+  .video-item .v-body .v-title { font-size: 14px; font-weight: 600; color: #111; }
+  .video-item .v-body .v-desc { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+  .video-item .v-arw { color: var(--blue); font-size: 14px; opacity: 0.6; flex-shrink: 0; }
+
+  /* ====== PROOF SECTION (案例/背书) ====== */
+  .proof-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .proof-card {
+    text-align: center;
+    padding: 40px 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .proof-card .p-num {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .proof-card .p-label {
+    font-size: 14px;
+    color: var(--text-gray);
+    letter-spacing: 1px;
+  }
+
+  /* ====== ABOUT ====== */
+  .about-block {
+    background: linear-gradient(135deg, #001a3a, #002855);
+    color: var(--white);
+    padding: 60px 40px;
+    text-align: center;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-block::before {
+    content: "";
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,109,234,0.25), transparent);
+    border-radius: 50%;
+  }
+  .about-block h3 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .about-block p {
+    font-size: 15px;
+    opacity: 0.85;
+    max-width: 600px;
+    margin: 0 auto 8px;
+    position: relative;
+    letter-spacing: 1px;
+  }
+
+  /* ====== CONTACT ====== */
+  .contact-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  .contact-info {
+    flex: 1 1 200px;
+    max-width: 300px;
+    text-align: center;
+    padding: 32px 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .contact-info .ci-icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+  }
+  .contact-info .ci-label {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-bottom: 6px;
+  }
+  .contact-info .ci-value {
+    font-size: 17px;
+    font-weight: 600;
+    color: #111;
+  }
+  .qr-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+  }
+  .qr-box {
+    text-align: center;
+    width: 180px;
+    padding: 24px 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .qr-box img {
+    width: 140px; height: 140px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+  }
+  .qr-box .qr-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 4px;
+  }
+  .qr-box .qr-hint {
+    font-size: 12px;
+    color: var(--text-light);
+  }
+
+  /* ====== FOOTER ====== */
+  .footer {
+    background: #0a1628;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 28px 20px;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 768px) {
+    .header-nav a { padding: 14px 10px; font-size: 13px; }
+    .hero { padding: 60px 16px 70px; }
+    .hero h1 { font-size: 24px; letter-spacing: 2px; }
+    .hero .subtitle { font-size: 14px; }
+    .section { padding: 56px 16px; }
+    .sec-header h2 { font-size: 22px; }
+    .adv-grid { grid-template-columns: 1fr; }
+    .scene-grid { grid-template-columns: repeat(2, 1fr); }
+    .video-list { grid-template-columns: 1fr; }
+    .about-block { padding: 40px 24px; }
+    .about-block h3 { font-size: 20px; }
+  }
+  @media (max-width: 480px) {
+    .scene-grid { grid-template-columns: 1fr; }
+    .video-list { grid-template-columns: 1fr; }
+  }
+
+  /* ====== SCENE DETAIL MODAL ====== */
+  .scene-card { cursor: pointer; }
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    padding: 20px;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal-box {
+    background: #fff;
+    border-radius: 10px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    display: flex;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 12px; right: 16px;
+    width: 32px; height: 32px;
+    border: none;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-close:hover { background: rgba(0,0,0,0.75); }
+  .modal-img {
+    flex: 0 0 420px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px 0 0 10px;
+    background: #f0f2f5;
+  }
+  .modal-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    min-height: 300px;
+  }
+  .modal-body {
+    flex: 1;
+    padding: 36px 32px;
+    min-width: 0;
+  }
+  .modal-body h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .modal-body .m-subtitle {
+    font-size: 13px;
+    color: var(--blue);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .modal-body .m-desc {
+    font-size: 14px;
+    color: var(--text-gray);
+    line-height: 1.9;
+    margin-bottom: 20px;
+  }
+  .modal-body .m-features {
+    list-style: none;
+    padding: 0;
+  }
+  .modal-body .m-features li {
+    padding: 8px 0 8px 20px;
+    font-size: 14px;
+    color: #444;
+    position: relative;
+    line-height: 1.7;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .modal-body .m-features li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 14px;
+    width: 8px; height: 8px;
+    background: var(--blue);
+    border-radius: 2px;
+  }
+  .modal-body .m-source {
+    font-size: 13px;
+    color: #777;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 768px) {
+    .modal-box { flex-direction: column; }
+    .modal-img { flex: 0 0 200px; border-radius: 10px 10px 0 0; }
+    .modal-body { padding: 24px 20px; }
+    .modal-body h3 { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">杰</div>
+      <div class="logo-text">杰欣智能<span>JieXin Intelligence</span></div>
+    </a>
+    <nav class="header-nav">
+      <a href="#advantages">核心优势</a>
+      <a href="#composition">系统组成</a>
+      <a href="#scenes">适用场景</a>
+      <a href="#videos">操作教程</a>
+      <a href="#about">关于我们</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ====== HERO ====== -->
+<section class="hero">
+  <div class="badge">智慧政务 · 智能会议签到解决方案</div>
+  <h1>RFID <span class="accent">无障碍</span>智能签到系统</h1>
+  <p class="subtitle">远距离自动识别 · 秒级无感通行 · 实时数据大屏 · 人脸双重核验</p>
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-num">0.3<span style="font-size:18px;font-weight:400">秒</span></div>
+      <div class="stat-label">单人次签到速度</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">160<span style="font-size:18px;font-weight:400">cm</span></div>
+      <div class="stat-label">远距离识别范围</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100+</div>
+      <div class="stat-label">人/分钟通行能力</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">99.9<span style="font-size:18px;font-weight:400">%</span></div>
+      <div class="stat-label">识别准确率</div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 核心优势 ====== -->
+<section class="section" id="advantages">
+  <div class="sec-header">
+    <div class="label">Core Advantages</div>
+    <h2>核心优势</h2>
+    <div class="line"></div>
+    <p>以技术创新驱动政务会议智能化升级，打造高效、安全、便捷的签到体验</p>
+  </div>
+  <div class="adv-grid">
+
+    <div class="adv-card">
+      <div class="adv-num">01</div>
+      <div class="adv-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M10 22v-5l-2-3V9h8v5l-2 3v5"/></svg>
+      </div>
+      <h3>无感签到 · 秒级通行</h3>
+      <p>代表佩戴RFID证件卡正常步入会场，系统远距离自动识别并完成签到，无需停留、无需主动刷卡，通行效率高达百人/分钟。</p>
+    </div>
+
+    <div class="adv-card">
+      <div class="adv-num">02</div>
+      <div class="adv-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <h3>代表团可视大屏</h3>
+      <p>签到数据实时投放到会场大屏/广告机，到会人数、签到率、各代表团统计一目了然，提升会议科技感与管理透明度。</p>
+    </div>
+
+    <div class="adv-card">
+      <div class="adv-num">03</div>
+      <div class="adv-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><rect x="16" y="3" width="6" height="6" rx="1"/></svg>
+      </div>
+      <h3>人证合一 · 双重核验</h3>
+      <p>RFID签到搭配人脸识别终端，实现人证双重比对验证，杜绝代签、冒签行为，满足政务会议高等级安全要求。</p>
+    </div>
+
+    <div class="adv-card">
+      <div class="adv-num">04</div>
+      <div class="adv-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <h3>数据导出 · 一键归档</h3>
+      <p>签到数据自动汇总，支持按代表团、时间段、签到状态等多维度筛选统计，一键导出Excel报表，无缝对接政务OA系统。</p>
+    </div>
+
+    <div class="adv-card">
+      <div class="adv-num">05</div>
+      <div class="adv-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <h3>无障碍通道设计</h3>
+      <p>通道宽度可按需定制，支持轮椅及行动不便人士顺利通行，体现政务会议人文关怀，符合无障碍环境建设标准。</p>
+    </div>
+
+    <div class="adv-card">
+      <div class="adv-num">06</div>
+      <div class="adv-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>稳定可靠 · 工业级保障</h3>
+      <p>支持离线签到与断网续传，工业级硬件设计适应各类会场环境，7×24小时稳定运行，已成功服务数百场政务会议。</p>
+    </div>
+  </div>
+
+  <!-- 数据背书 -->
+  <div class="proof-grid" style="margin-top:40px;">
+    <div class="proof-card">
+      <div class="p-num">500+</div>
+      <div class="p-label">累计服务会议场次</div>
+    </div>
+    <div class="proof-card">
+      <div class="p-num">100万+</div>
+      <div class="p-label">累计服务参会人数</div>
+    </div>
+    <div class="proof-card">
+      <div class="p-num">20年+</div>
+      <div class="p-label">RFID行业深耕</div>
+    </div>
+    <div class="proof-card">
+      <div class="p-num">99.9%</div>
+      <div class="p-label">系统运行稳定性</div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 系统组成 ====== -->
+<div class="section-gray">
+<section class="section" id="composition">
+  <div class="sec-header">
+    <div class="label">System Components</div>
+    <h2>系统组成</h2>
+    <div class="line"></div>
+    <p>软硬件一体化解决方案，模块化设计，开箱即用</p>
+  </div>
+  <div class="prod-grid">
+    <div class="prod-card" onclick="openProdModal('p1')">
+      <div class="prod-img">
+        <div class="placeholder">
+          <svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 地面 -->
+            <rect x="0" y="160" width="240" height="20" fill="#e8edf2"/>
+            <!-- 左柱身（透明亚克力） -->
+            <rect x="8" y="24" width="24" height="136" rx="3" fill="#e0eefb" stroke="#b8d4f0" stroke-width="1"/>
+            <rect x="10" y="26" width="5" height="130" rx="2" fill="#4da3f5" opacity="0.7"/>
+            <!-- 左底座 -->
+            <rect x="2" y="148" width="36" height="14" rx="2" fill="#f5f5f5" stroke="#d0d0d0" stroke-width="1"/>
+            <!-- 右柱身（透明亚克力） -->
+            <rect x="208" y="24" width="24" height="136" rx="3" fill="#e0eefb" stroke="#b8d4f0" stroke-width="1"/>
+            <rect x="225" y="26" width="5" height="130" rx="2" fill="#4da3f5" opacity="0.7"/>
+            <!-- 右底座 -->
+            <rect x="202" y="148" width="36" height="14" rx="2" fill="#f5f5f5" stroke="#d0d0d0" stroke-width="1"/>
+            <!-- 顶部横梁 -->
+            <rect x="4" y="20" width="232" height="6" rx="2" fill="#c8ddf5"/>
+            <!-- LED发光效果 -->
+            <ellipse cx="20" cy="88" rx="4" ry="4" fill="#4da3f5" opacity="0.8"/>
+            <ellipse cx="220" cy="88" rx="4" ry="4" fill="#4da3f5" opacity="0.8"/>
+            <!-- 通道中间标签 -->
+            <text x="120" y="98" text-anchor="middle" fill="#8899aa" font-size="12" font-weight="600">RFID</text>
+            <text x="120" y="114" text-anchor="middle" fill="#bcc8d4" font-size="10">感应通道门</text>
+          </svg>
+        </div>
+      </div>
+      <div class="prod-body">
+        <h4>RFID感应通道门</h4>
+        <p>13.56MHz远距离识别 · 无障碍宽通道 · 声光提示 · 主副机单线连接</p>
+      </div>
+    </div>
+    <div class="prod-card" onclick="openProdModal('p2')">
+      <div class="prod-img">
+        <div class="placeholder">
+          <svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 卡片背景 -->
+            <rect x="30" y="14" width="180" height="152" rx="10" fill="#C41E3A"/>
+            <!-- 卡片内边 -->
+            <rect x="38" y="22" width="164" height="136" rx="8" fill="#B01A32"/>
+            <!-- 顶部金色横条 -->
+            <rect x="38" y="22" width="164" height="22" rx="6" fill="#C8962E"/>
+            <!-- 顶部文字 -->
+            <text x="120" y="37" text-anchor="middle" fill="#fff" font-size="9" font-weight="600">中国人民政治协商会议</text>
+            <!-- 政协五角星LOGO -->
+            <circle cx="82" cy="82" r="18" fill="#C8962E"/>
+            <text x="82" y="86" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">★</text>
+            <!-- 出席证 -->
+            <text x="82" y="112" text-anchor="middle" fill="#C8962E" font-size="13" font-weight="bold">出席证</text>
+            <!-- 编号 -->
+            <text x="82" y="128" text-anchor="middle" fill="#e0c888" font-size="8" font-weight="600">NO. 2026-0273</text>
+            <!-- 右侧照片框 -->
+            <rect x="145" y="62" width="48" height="60" rx="3" fill="#f0f0f0" stroke="#ddd" stroke-width="0.5"/>
+            <text x="169" y="96" text-anchor="middle" fill="#ccc" font-size="8">照片</text>
+          </svg>
+        </div>
+      </div>
+      <div class="prod-body">
+        <h4>RFID智能证件卡</h4>
+        <p>内置微型天线 · 远距离稳定识别 · 可定制印刷 · 重复循环使用</p>
+      </div>
+    </div>
+    <div class="prod-card" onclick="openProdModal('p3')">
+      <div class="prod-img">
+        <div class="placeholder">
+          <svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 底座 -->
+            <rect x="88" y="140" width="64" height="16" rx="4" fill="#333"/>
+            <rect x="96" y="136" width="48" height="6" rx="2" fill="#555"/>
+            <!-- 支架连接 -->
+            <rect x="115" y="108" width="10" height="28" rx="2" fill="#333"/>
+            <!-- 摄像头主体（白色枪机） -->
+            <rect x="60" y="58" width="120" height="52" rx="6" fill="#f8f8f8" stroke="#d0d0d0" stroke-width="1"/>
+            <!-- 遮阳罩 -->
+            <path d="M56 58 L70 14 L170 14 L184 58 Z" fill="#333" stroke="#222" stroke-width="0.5"/>
+            <path d="M66 58 L76 24 L164 24 L174 58 Z" fill="#444"/>
+            <!-- 镜头圆环 -->
+            <circle cx="120" cy="84" r="18" fill="#222"/>
+            <circle cx="120" cy="84" r="12" fill="#1a1a1a"/>
+            <circle cx="120" cy="84" r="6" fill="#333"/>
+            <circle cx="122" cy="82" r="3" fill="#555" opacity="0.5"/>
+            <!-- 红外灯 -->
+            <circle cx="92" cy="72" r="3" fill="#880000"/>
+            <!-- 品牌标识 -->
+            <rect x="70" y="100" width="100" height="4" rx="1" fill="#ddd"/>
+          </svg>
+        </div>
+      </div>
+      <div class="prod-body">
+        <h4>人脸识别终端</h4>
+        <p>双目活体检测 · 人证快速比对 · 支持离线识别 · 工业级可靠</p>
+      </div>
+    </div>
+    <div class="prod-card" onclick="openProdModal('p4')">
+      <div class="prod-img">
+        <div class="placeholder">
+          <svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 底座 -->
+            <rect x="85" y="152" width="70" height="12" rx="3" fill="#555"/>
+            <rect x="95" y="146" width="50" height="8" rx="2" fill="#666"/>
+            <!-- 支架杆 -->
+            <rect x="116" y="66" width="8" height="82" rx="2" fill="#888"/>
+            <!-- 屏幕外框 -->
+            <rect x="38" y="10" width="164" height="112" rx="6" fill="#222"/>
+            <!-- 内屏 -->
+            <rect x="46" y="16" width="148" height="98" rx="3" fill="#1a3a5c"/>
+            <!-- 屏幕内容 -->
+            <rect x="56" y="24" width="60" height="8" rx="1" fill="#2d5f9e" opacity="0.6"/>
+            <rect x="56" y="38" width="80" height="4" rx="1" fill="#3d7fbe" opacity="0.4"/>
+            <rect x="56" y="48" width="72" height="4" rx="1" fill="#3d7fbe" opacity="0.4"/>
+            <rect x="56" y="58" width="96" height="4" rx="1" fill="#3d7fbe" opacity="0.3"/>
+            <circle cx="82" cy="82" r="16" fill="#2d5f9e" opacity="0.5"/>
+            <text x="82" y="86" text-anchor="middle" fill="#4d9fde" font-size="8" font-weight="bold">签到</text>
+            <!-- 品牌 -->
+            <rect x="56" y="104" width="40" height="3" rx="1" fill="#3d7fbe" opacity="0.2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="prod-body">
+        <h4>广告机大屏</h4>
+        <p>签到数据实时展示 · 会议信息发布 · 支持多屏联动 · 远程管理</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ====== 适用场景 ====== -->
+<div class="section-blue">
+<section class="section" id="scenes">
+  <div class="sec-header">
+    <div class="label">Application Scenarios</div>
+    <h2>适用场景</h2>
+    <div class="line"></div>
+    <p>专注政务会议场景，为各级党政机关提供专业签到解决方案</p>
+  </div>
+  <div class="scene-grid">
+    <div class="scene-card" style="--scene-bg: url('images/scene-1-rd.jpg')" onclick="openModal(1)" data-scene="1">
+      <div class="s-icon">🏛️</div>
+      <div class="s-name">人民代表大会</div>
+    </div>
+    <div class="scene-card" style="--scene-bg: url('images/scene-2-ddh.jpg')" onclick="openModal(2)" data-scene="2">
+      <div class="s-icon">⭐</div>
+      <div class="s-name">党员代表大会</div>
+    </div>
+    <div class="scene-card" style="--scene-bg: url('images/scene-4-zw.jpg')" onclick="openModal(3)" data-scene="3">
+      <div class="s-icon">🤝</div>
+      <div class="s-name">政协会议</div>
+    </div>
+    <div class="scene-card" style="--scene-bg: url('images/scene-3-zx.jpg')" onclick="openModal(4)" data-scene="4">
+      <div class="s-icon">📋</div>
+      <div class="s-name">政务工作会议</div>
+    </div>
+    <div class="scene-card" style="--scene-bg: url('images/scene-5-dx.jpg')" onclick="openModal(5)" data-scene="5">
+      <div class="s-icon">🎓</div>
+      <div class="s-name">干部培训 / 党校</div>
+    </div>
+    <div class="scene-card" style="--scene-bg: url('images/scene-6-fh.jpg')" onclick="openModal(6)" data-scene="6">
+      <div class="s-icon">🏢</div>
+      <div class="s-name">大型论坛 / 峰会</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ====== 操作教程 ====== -->
+<section class="section" id="videos">
+  <div class="sec-header">
+    <div class="label">Tutorials</div>
+    <h2>操作教程</h2>
+    <div class="line"></div>
+    <p>图文视频教学，帮助运维人员快速掌握系统使用与故障排除</p>
+  </div>
+  <div class="video-list">
+    <a class="video-item" href="https://mp.weixin.qq.com/s/mmr7sAjYSdbjFZzpD_UEMg" target="_blank">
+      <div class="v-idx">1</div>
+      <div class="v-body">
+        <div class="v-title">810型通道机连接教程</div>
+        <div class="v-desc">公众号图文 · 含视频演示</div>
+      </div>
+      <div class="v-arw">→</div>
+    </a>
+    <a class="video-item" href="https://mp.weixin.qq.com/s/rQycHmv09_OYHASusOEY6Q" target="_blank">
+      <div class="v-idx">2</div>
+      <div class="v-body">
+        <div class="v-title">RFID无障碍智能签到系统操作教程</div>
+        <div class="v-desc">公众号图文 · 含视频演示</div>
+      </div>
+      <div class="v-arw">→</div>
+    </a>
+    <a class="video-item" href="https://mp.weixin.qq.com/s/Yt4ZmaWsVKbPok477MT3uA" target="_blank">
+      <div class="v-idx">3</div>
+      <div class="v-body">
+        <div class="v-title">人脸识别设置教程</div>
+        <div class="v-desc">公众号图文 · 含视频演示</div>
+      </div>
+      <div class="v-arw">→</div>
+    </a>
+    <a class="video-item" href="https://mp.weixin.qq.com/s/XaG5fgh7gLpAckEqOEYEXg" target="_blank">
+      <div class="v-idx">4</div>
+      <div class="v-body">
+        <div class="v-title">广告机无法连接签到系统设置</div>
+        <div class="v-desc">公众号图文 · 含视频演示</div>
+      </div>
+      <div class="v-arw">→</div>
+    </a>
+    <a class="video-item" href="https://mp.weixin.qq.com/s/k6mCh6nXYc0MdEsOYLUE0Q" target="_blank">
+      <div class="v-idx">5</div>
+      <div class="v-body">
+        <div class="v-title">签到系统无法正常启动解决教程</div>
+        <div class="v-desc">公众号图文 · 含视频演示</div>
+      </div>
+      <div class="v-arw">→</div>
+    </a>
+  </div>
+</section>
+
+<!-- ====== 关于我们 ====== -->
+<section class="section" id="about">
+  <div class="about-block">
+    <h3>杰欣智能科技有限公司</h3>
+    <p>成立于2014年，专注于RFID智能识别与物联网应用领域</p>
+    <p>致力于为政务会议提供高效、安全、智能的无障碍签到解决方案</p>
+    <p style="margin-top:14px; font-size:13px; opacity:0.65;">深耕行业十余年 · 服务客户遍布全国 · 持续技术创新</p>
+  </div>
+</section>
+
+<!-- ====== 联系我们 ====== -->
+<section class="section" style="padding-top:0;">
+  <div class="contact-wrap">
+    <div class="contact-info">
+      <div class="ci-icon">📍</div>
+      <div class="ci-label">公司地址</div>
+      <div class="ci-value">福建省泉州市</div>
+    </div>
+    <div class="contact-info">
+      <div class="ci-icon">📞</div>
+      <div class="ci-label">咨询热线</div>
+      <div class="ci-value">13305958002</div>
+    </div>
+  </div>
+  <div class="qr-row">
+    <div class="qr-box">
+      <img src="images/qr-kefu-new.png" alt="微信客服二维码">
+      <div class="qr-name">微信客服</div>
+      <div class="qr-hint">扫码添加 · 在线咨询</div>
+    </div>
+    <div class="qr-box">
+      <img src="images/qr-laoban-new.png" alt="商务合作二维码">
+      <div class="qr-name">商务合作</div>
+      <div class="qr-hint">扫码添加 · 项目洽谈</div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer class="footer">
+  &copy; 2014-2026 杰欣智能科技有限公司 &nbsp;|&nbsp; 专注RFID智能签到 &nbsp;|&nbsp; 服务热线 13305958002
+</footer>
+
+<!-- ====== SCENE DETAIL MODAL ====== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-img">
+      <img id="modalImg" src="" alt="">
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+var sceneData = {
+  1: {
+    title: "人民代表大会",
+    subtitle: "全国 / 地方各级人民代表大会",
+    img: "images/scene-1-rd.jpg",
+    desc: "人民代表大会是国家最高权力机关，各级人大会议规格高、流程严、参会人数多。传统手工签到耗时长、易出错，RFID无障碍智能签到系统实现代表步入会场即自动签到，提升会议组织效率与智能化水平。",
+    features: [
+      "代表佩戴RFID证件卡通过通道门，无需停留、无需主动刷卡，秒级完成签到",
+      "实时数据同步大屏展示，应到/实到/请假人数一目了然，支持按代表团分类统计",
+      "支持人脸识别+RFID双重验证，人证合一比对，确保签到身份准确无误",
+      "会后一键导出签到报表，支持Excel/PDF格式，无缝对接政务OA系统归档"
+    ],
+    source: "参考：新华网两会报道、中国人大网、RFID世界网政务签到方案"
+  },
+  2: {
+    title: "党员代表大会",
+    subtitle: "全国 / 省市级党员代表大会",
+    img: "images/scene-2-ddh.jpg",
+    desc: "党员代表大会是党内最高规格会议之一，从党的十九大到各省市党代会，签到环节是大会组织的重要流程。RFID感应通道签到系统可快速识别党员代表身份，确保签到准确高效，体现会议组织的严谨规范。",
+    features: [
+      "党员代表胸前佩戴RFID代表证卡，正常步行通过感应通道即可完成签到",
+      "大屏即时显示代表身份信息（姓名、头像、代表团），便于安保核验放行",
+      "无证或非授权人员通过时系统自动声光报警，全程可追溯",
+      "系统支持会议安排、人员分配、座位管理、数据采集与统计报表等全流程管理"
+    ],
+    source: "参考：知乎《党代会会议签到感应通道签到系统的应用》"
+  },
+  3: {
+    title: "政协会议",
+    subtitle: "全国 / 地方各级政治协商会议",
+    img: "images/scene-3-zx.jpg",
+    desc: "政协会议汇聚各界委员参政议政，具有参会人员构成多元、身份多样的特点。RFID无障碍签到系统专为政协论坛、高端会议等正式场景设计，兼顾高效通行与人文关怀，支持轮椅等无障碍通行。",
+    features: [
+      "宽通道设计（≥1.2m），支持轮椅及行动不便人士顺畅通行，体现人文关怀",
+      "委员报到无需排队刷卡，正常步入会场即可自动完成身份识别与签到",
+      "系统支持离线签到与断网续传，确保网络不稳定时签到不中断",
+      "实时统计报到率，按界别、分组等多维度汇总，一键生成签到统计报表"
+    ],
+    source: "参考：RFID世界网《RFID无障碍智能签到系统》、人民政协网"
+  },
+  4: {
+    title: "政务工作会议",
+    subtitle: "政府日常会议 / 部门工作会议",
+    img: "images/scene-4-zw.jpg",
+    desc: "政务工作会议频次高、类型多、规模多样，从日常部门会议到跨部门联动会议，传统手工签到效率低且数据无法有效沉淀。RFID智能签到系统为政务工作会议提供轻量化、可复用的签到解决方案。",
+    features: [
+      "设备可快速部署和回收，适配不同会议室、不同场次的灵活签到需求",
+      "签到数据自动汇总至后台管理系统，支持多维度查询和统计分析",
+      "支持多级联动——一个平台管理多个会议室、多场会议的签到数据",
+      "可对接政务OA、考勤系统，实现会议出勤数据的自动化流转与归档"
+    ],
+    source: "参考：知乎《基于RFID射频识别技术的开放式大型会议签到解决方案》"
+  },
+  5: {
+    title: "干部培训 / 党校",
+    subtitle: "党校培训班次 · 干部教育培训基地",
+    img: "images/scene-5-dx.jpg",
+    desc: "党校和干部培训基地承担着大规模培训干部的重要使命，培训班次密集、学员流动频繁。RFID无感签到系统帮助实现学员考勤自动化管理，大幅降低人工点名的时间成本。",
+    features: [
+      "学员佩戴RFID学员证进出教学楼/报告厅，系统自动记录出勤和课时",
+      "支持课程签到、缺勤预警、学分统计，培训考勤数据自动汇总归档",
+      "多通道并列部署，百人级培训班可在1-2分钟内完成全员签到",
+      "可联动教务管理系统，实现学员信息-课程安排-签到数据的闭环管理"
+    ],
+    source: "参考：中央党校信息化建设相关报道、知乎会议签到技术方案"
+  },
+  6: {
+    title: "大型论坛 / 峰会",
+    subtitle: "高峰论坛 · 行业峰会 · 国际会议",
+    img: "images/scene-6-fh.jpg",
+    desc: "大型论坛和峰会动辄上千人参会，对签到系统的吞吐能力和稳定性提出极高要求。从世界互联网大会乌镇峰会到博鳌亚洲论坛，RFID无障碍签到系统已成为大型国际会议的标准配置。",
+    features: [
+      "支持多通道并行，千人级会议可在10分钟内完成签到，避免入场拥堵",
+      "系统支持双频RFID（HF+UHF），识别灵敏度高，密集人群也能精准读取",
+      "实时监控到场率、未到人员，主办方可随时掌握签到进展",
+      "工业级硬件设计，7×24小时稳定运行，经历数百场大型会议实战验证"
+    ],
+    source: "参考：光明网世界互联网大会报道、RFID世界网产品方案"
+  }
+};
+
+function openModal(id) {
+  var d = sceneData[id];
+  if (!d) return;
+  document.getElementById('modalImg').src = d.img;
+  document.getElementById('modalImg').alt = d.title;
+  document.querySelector('.modal-img').style.display = '';
+  var html = '<h3>' + d.title + '</h3>';
+  html += '<div class="m-subtitle">' + d.subtitle + '</div>';
+  html += '<div class="m-desc">' + d.desc + '</div>';
+  html += '<ul class="m-features">';
+  d.features.forEach(function(f) { html += '<li>' + f + '</li>'; });
+  html += '</ul>';
+  html += '<div class="m-source">' + d.source + '</div>';
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+/* ====== Product Data ====== */
+var prodData = {
+  p1: {
+    title: "RFID感应通道门",
+    subtitle: "13.56MHz远距离无感识别通道",
+    desc: "RFID感应通道门是系统的核心硬件，采用工业级钣金结构，主副机单线连接，无需辅助天线，单台通道识别距离可达120cm。内置13.56MHz高频读写模块，支持ISO 15693协议，可精准识别人体胸前佩戴的RFID证件卡，无需刷卡、无需停留，实现真正的无感通行签到。",
+    features: [
+      "识别距离≥120cm，常规1.2米宽通道，支持轮椅无障碍通行",
+      "13.56MHz高频双天线，读写稳定、方向性强、不误读不串读不跳读",
+      "红外触发识别，每秒可读取50+张卡，多人同时通过也能精准区分",
+      "主副机RJ45单线连接，即插即用，单人10分钟即可完成安装调试"
+    ],
+    source: "杰欣智能 · 810型RFID感应通道门 · 工业级钣金 · 主副机一体化设计"
+  },
+  p2: {
+    title: "RFID智能证件卡",
+    subtitle: "内置微型天线 · 远距离稳定识别",
+    desc: "RFID智能证件卡是参会代表身份识别的核心载体，内置微型13.56MHz高频天线与加密芯片，采用ISO 15693协议，可与通道门进行远距离数据交互。卡片支持定制印刷（姓名、照片、二维码等），外观规范大气，适配政务会议的正式格调。可重复循环使用，经济环保。",
+    features: [
+      "内置微型13.56MHz天线，读距稳定可靠，胸卡位即可被通道门精准识别",
+      "支持Mifare/ISO 15693等多种协议，可与市面上主流读写设备兼容",
+      "卡片ID全球唯一，支持加密防伪，防止代签、伪造等安全风险",
+      "表面可定制印刷：姓名、照片、二维码、会议名称等，成品规范庄重"
+    ],
+    source: "杰欣智能 · RFID智能证件卡 · 可定制 · 可循环 · 适配ISO 15693协议"
+  },
+  p3: {
+    title: "人脸识别终端",
+    subtitle: "双目活体检测 · 人证合一比对",
+    desc: "人脸识别终端作为签到系统的补充验证模块，采用双目红外+RGB摄像头，支持活体检测，有效杜绝照片、视频等欺诈手段。终端可与RFID通道门联动，实现\"刷卡+人脸\"双重验证，亦可独立作为签到的辅助入口，适用于需要高安全等级的政务会议场景。",
+    features: [
+      "双目红外+RGB活体检测，精确抵御照片、视频、面具等攻击手段",
+      "支持1:1人证比对和1:N人脸搜索，毫秒级识别速度",
+      "离线模式也可正常使用，网络恢复后自动同步签到数据",
+      "8寸/10寸IPS触摸屏可选，壁挂或立柱安装，灵活适配各类会议室环境"
+    ],
+    source: "杰欣智能 · 人脸识别终端 · 双目活体 · 工业级 · 适配政务会议"
+  },
+  p4: {
+    title: "广告机大屏",
+    subtitle: "签到数据实时展示 · 多屏联动",
+    desc: "广告机大屏作为签到系统的展示终端，将签到数据以可视化方式实时呈现。支持应到/实到/请假人数统计、到场率仪表盘、代表信息滚动展示等多种视图，亦可用于会议议程发布、欢迎页面、党建宣传等多种用途。支持多屏联动，主会场、分会场、走廊可同步展示。",
+    features: [
+      "实时同步签到数据，动态展示到场人数、到场率、代表团统计等",
+      "支持多种展示模板：仪表盘、排行榜、滚动名单、欢迎页，一键切换",
+      "同步发布会议议程、通知公告、欢迎辞，一屏多用",
+      "支持远程内容管理和定时开关机，运维简便，无需专人值守"
+    ],
+    source: "杰欣智能 · 广告机大屏 · 多屏联动 · 远程管理 · 数据可视化"
+  }
+};
+
+function openProdModal(id) {
+  var d = prodData[id];
+  if (!d) return;
+  document.querySelector('.modal-img').style.display = 'none';
+  var html = '<h3>' + d.title + '</h3>';
+  html += '<div class="m-subtitle">' + d.subtitle + '</div>';
+  html += '<div class="m-desc">' + d.desc + '</div>';
+  html += '<ul class="m-features">';
+  d.features.forEach(function(f) { html += '<li>' + f + '</li>'; });
+  html += '</ul>';
+  html += '<div class="m-source">' + d.source + '</div>';
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+</script>
+
+<!-- ========== 内容安全防护 ========== -->
+<script>
+(function(){
+  // 1. 禁止右键菜单
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); return false; });
+
+  // 2. 禁止快捷键：Ctrl+C/V/S/U/P/Shift+I/J, F12
+  document.addEventListener('keydown', function(e){
+    if (e.keyCode === 123) { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+      e.preventDefault(); return false;
+    }
+    if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) {
+      e.preventDefault(); return false;
+    }
+    if (e.ctrlKey && e.keyCode === 80) { e.preventDefault(); return false; }
+  });
+
+  // 3. Console 静默
+  ['log','info','warn','error','table','clear','dir'].forEach(function(k){ var _k=console[k]; });
+  console.clear();
+  console.log = function(){};
+  console.info = function(){};
+  console.warn = function(){};
+  console.error = function(){};
+  console.table = function(){};
+
+  // 4. 阻止拖拽
+  document.addEventListener('dragstart', function(e){ e.preventDefault(); return false; });
+
+  // 5. 文本选中由 CSS user-select:none 控制
+
+  // 6. 阻止 Ctrl+C 复制
+  document.addEventListener('copy', function(e){ e.preventDefault(); return false; });
+  document.addEventListener('cut', function(e){ e.preventDefault(); return false; });
+
+  // 7. 打印保护
+  var _print = window.print;
+  window.print = function(){ alert('打印功能已禁用'); return false; };
+
+  // 8. 动态水印
+  (function(){
+    var wm = document.createElement('div');
+    var wmText = document.createElement('div');
+    function updateWatermark(){
+      var now = new Date();
+      var pad = function(n){ return ('0'+n).slice(-2); };
+      var time = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+      var date = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
+      var ua = navigator.userAgent;
+      var browser = '?';
+      if (ua.indexOf('Edg') > -1) browser = 'Edge';
+      else if (ua.indexOf('Chrome') > -1) browser = 'Chrome';
+      else if (ua.indexOf('Firefox') > -1) browser = 'FF';
+      else if (ua.indexOf('Safari') > -1) browser = 'Safari';
+      var os = '?';
+      if (ua.indexOf('Win') > -1) os = 'Win';
+      else if (ua.indexOf('Mac') > -1) os = 'Mac';
+      else if (ua.indexOf('Linux') > -1 && ua.indexOf('Android') === -1) os = 'Linux';
+      else if (ua.indexOf('Android') > -1) os = 'Android';
+      else if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) os = 'iOS';
+      wmText.textContent = '\u6770\u6b23\u667a\u80fd JXINIT \u00b7 ' + date + ' ' + time + ' \u00b7 ' + browser + '/' + os;
+    }
+    updateWatermark();
+    setInterval(updateWatermark, 1000);
+    wmText.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:14px;font-weight:700;color:#000;white-space:nowrap;letter-spacing:4px;';
+    wm.appendChild(wmText);
+    wm.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999999;opacity:0.015;background:repeating-linear-gradient(-35deg, transparent, transparent 120px, rgba(0,0,0,0.3) 120px, rgba(0,0,0,0.3) 240px);';
+    document.body.appendChild(wm);
+  })();
+})();
+</script>
+
+</body>
+</html>
