@@ -963,12 +963,27 @@
     .header-menu-btn { display: block; }
     .sidebar {
       right: -200px;
+      top: 0;
+      transform: none;
       width: 160px;
+      height: 100vh;
+      border-radius: 0;
       transition: right 0.3s ease;
       box-shadow: -2px 0 20px rgba(0,0,0,0.15);
+      z-index: 95;
     }
     .sidebar.open { right: 0; }
-    .sidebar-toggle { display: flex; }
+    .sidebar-nav a {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      padding: 12px 0;
+    }
+    .sidebar-toggle {
+      display: flex;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .sidebar-overlay { z-index: 90; }
     .main-content { margin-left: 0; }
     /* 移动端打开侧边栏时添加遮罩 */
     .sidebar-overlay {
