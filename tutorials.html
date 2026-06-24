@@ -9,29 +9,43 @@ html { -webkit-user-select: none; user-select: none; }
 body { -webkit-user-select: none; user-select: none; }
 img { -webkit-user-drag: none; user-drag: none; pointer-events: auto; }
 :root {
-  --red: #C41E3A;
-  --red-dark: #8B0000;
-  --red-light: #E8455B;
-  --gold: #D4A843;
-  --gold-light: #F0D68A;
-  --bg: #fdf8f5;
-  --text: #333;
-  --text-light: #888;
-  --border: #e8ddd0;
-  --card-bg: #fff;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+    --red: #c41e3a;
+    --red-dark: #8b1a2b;
+    --red-deep: #5c0a14;
+    --gold: #d4a843;
+    --gold-light: #f0d68a;
+    --white: #fff;
+    --bg: #faf8f5;
+    --bg-dark: #1a1a2e;
+    --text: #222;
+    --text-gray: #666;
+    --text-light: #999;
+    --border: #e8e4dc;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
 
-/* ====== HEADER ====== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "SimSun", "STSong", "Noto Serif CJK SC", "Songti SC", "Microsoft YaHei", serif;
+    color: var(--text);
+    background: var(--bg);
+    font-size: 16px;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+
+/* ====== TOP BAR ====== */
 .top-bar {
-  background: var(--red-dark); color: rgba(255,255,255,0.85);
-  font-size: 12px; text-align: center; padding: 6px 16px;
+  background: var(--red-deep); color: rgba(255,255,255,0.7);
+  font-size: 12px; text-align: center; padding: 6px 20px;
   letter-spacing: 2px;
 }
 .header {
-  background: #fff; position: sticky; top: 0; z-index: 99;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  background: linear-gradient(180deg, #fff 0%, #fefefe 100%);
+  border-bottom: 2px solid var(--red);
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 20px;
 }
 .header-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 20px;
@@ -42,18 +56,16 @@ body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:var(-
 .logo img { height: 42px; width: auto; }
 .logo-text { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
 .logo-text span { color: var(--red); font-weight: 400; font-size: 13px; margin-left: 6px; display: block; line-height: 1.3; }
-.header-nav { display: flex; gap: 0; list-style: none; }
+.header-nav { display: flex; gap: 0; list-style: none; margin: 0; padding: 0; }
 .header-nav a {
-  display: block; padding: 22px 18px; font-size: 15px;
-  color: #555; text-decoration: none;
-  border-bottom: 3px solid transparent;
-  transition: all 0.25s; white-space: nowrap;
-  letter-spacing: 1px; font-weight: 500;
+  display: block; padding: 22px 18px; font-size: 15px; color: #555;
+  text-decoration: none; border-bottom: 3px solid transparent;
+  transition: all 0.25s; white-space: nowrap; letter-spacing: 1px;
+  font-weight: 500; position: relative;
 }
-.header-nav a:hover, .header-nav a.active {
-  color: var(--red); border-bottom-color: var(--red);
-  background: rgba(196,30,58,0.03);
-}
+.header-nav a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 3px; background: var(--red); transition: width 0.3s ease; }
+.header-nav a:hover, .header-nav a.active { color: var(--red); background: rgba(196,30,58,0.03); }
+.header-nav a:hover::after, .header-nav a.active::after { width: 100%; }
 /* ====== DROPDOWN ====== */
 .nav-dropdown { position: relative; }
 .nav-dropdown .drop-trigger {
@@ -105,14 +117,30 @@ body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:var(-
 .dropdown-menu a .icon { margin-right: 6px; }
 .header-menu-btn { display: none; background: none; border: none; font-size: 24px; color: var(--red-dark); cursor: pointer; padding: 6px; line-height: 1; }
 
-/* ====== PAGE HERO ====== */
-.page-hero {
-  background: linear-gradient(135deg, var(--red-dark) 0%, var(--red) 100%);
-  color: #fff; text-align: center; padding: 60px 20px 50px;
-}
+/* ====== PAGE BANNER ====== */
+  .page-banner {
+    background: linear-gradient(135deg, var(--red-dark) 0%, var(--red-deep) 100%);
+    padding: 60px 20px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .page-banner h1 { font-size: 34px; letter-spacing: 6px; position: relative; font-weight: 700; }
+  .page-banner .en-sub { font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 3px; margin-top: 8px; position: relative; }
 
-.page-hero h1 { font-size: 32px; letter-spacing: 4px; margin-bottom: 8px; font-weight: 700; }
-.page-hero .hero-sub { font-size: 15px; opacity: 0.85; letter-spacing: 1px; }
+  .divider-gold {
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px; margin: 20px auto 0; max-width: 320px; opacity: 0.5;
+  }
+  .divider-gold .d-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .divider-gold .d-star { color: var(--gold); font-size: 16px; }
 
 /* ====== MAIN ====== */
 .main-content { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
@@ -132,7 +160,7 @@ body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:var(-
 /* ====== MANUAL CARDS ====== */
 .manual-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
 .manual-card {
-  background: var(--card-bg); border-radius: 16px;
+  background: var(--white); border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.06);
   overflow: hidden; border: 1px solid var(--border);
   transition: transform 0.3s, box-shadow 0.3s;
@@ -190,7 +218,7 @@ body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:var(-
 /* ====== VIDEO SECTION ====== */
 .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .video-card {
-  background: var(--card-bg); border-radius: 12px;
+  background: var(--white); border-radius: 12px;
   overflow: hidden; border: 1px solid var(--border);
   transition: transform 0.3s, box-shadow 0.3s;
   text-decoration: none; color: inherit;
@@ -252,8 +280,8 @@ body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:var(-
   .nav-dropdown.open .dropdown-menu { display: flex; }
   .dropdown-menu a { padding: 12px 20px 12px 36px; font-size: 13px; }
   .header-menu-btn { display: block; }
-  .page-hero { padding: 40px 16px 36px; }
-  .page-hero h1 { font-size: 24px; letter-spacing: 2px; }
+.page-banner { padding: 40px 16px; }
+    .page-banner h1 { font-size: 24px; }
   .manual-grid { grid-template-columns: 1fr; }
   .video-grid { grid-template-columns: repeat(2, 1fr); }
   .section { padding: 50px 0; }
@@ -292,12 +320,12 @@ body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:var(-
   </div>
 </header>
 
-<!-- ====== PAGE HERO ====== -->
-<section class="page-hero">
-
+<!-- ====== PAGE BANNER ====== -->
+<div class="page-banner">
   <h1>说明教程</h1>
-  <p class="hero-sub">产品安装说明书下载 & 操作视频教程</p>
-</section>
+  <p class="en-sub">TUTORIALS &amp; MANUALS</p>
+  <div class="divider-gold"><span class="d-line"></span><span class="d-star">★</span><span class="d-line"></span></div>
+</div>
 
 <div class="main-content">
 
@@ -409,15 +437,15 @@ body { font-family: "Microsoft YaHei","PingFang SC",sans-serif; background:var(-
         </div>
       </a>
 
-      <!-- 4. 广告机无法连接签到系统设置 -->
+      <!-- 4. 一体机无法连接签到系统设置 -->
       <a class="video-card" href="https://mp.weixin.qq.com/s/XaG5fgh7gLpAckEqOEYEXg" target="_blank">
         <div class="video-thumb">
-          <img src="images/tutorial-cover-4.jpg" alt="广告机无法连接签到系统设置" loading="lazy">
+          <img src="images/tutorial-cover-4.jpg" alt="一体机无法连接签到系统设置" loading="lazy">
           <div class="play-overlay"><div class="play-icon">&#9654;</div></div>
         </div>
         <div class="video-info">
           <span class="v-num">大屏配置</span>
-          <div class="v-title">广告机无法连接签到系统设置</div>
+          <div class="v-title">一体机无法连接签到系统设置</div>
           <p>签到大屏配置、网络连接排查、显示适配调试</p>
           <div class="v-source">&#128279; 微信公众号 · 含视频演示</div>
         </div>
